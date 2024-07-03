@@ -8,7 +8,7 @@ import {UserCircleIcon as Profile} from "react-native-heroicons/solid";
 import {QuestionMarkCircleIcon as Questions} from "react-native-heroicons/solid";
 import {BoltIcon as Answers} from "react-native-heroicons/solid";
 import { useState } from 'react';
-
+import { colours } from '../../colours';
 
 const BottomTab = ({navigation,active}) => {
   const [ActiveTab,setActiveTab] = useState(active);
@@ -28,7 +28,7 @@ const BottomTab = ({navigation,active}) => {
   
   return (
     
-    <View style={[styles.wrapper,{backgroundColor:"white"}]}>
+    <View style={[styles.wrapper,{backgroundColor:colours.bottomtab}]}>
       <View style={styles.wrapper2}>
     
 
@@ -36,20 +36,20 @@ const BottomTab = ({navigation,active}) => {
 
     {/**Questions Tab */}
     {ActiveTab!="main" && <TouchableOpacity onPress={mainactivate}>
-      <Questions1 size={50} color={"blue"}/>
+      <Questions1 size={50} color={colours.main}/>
       {/**console.log(ActiveTab)*/}
     </TouchableOpacity>}
     {ActiveTab==="main" && <TouchableOpacity disabled={true} onPress={mainactivate}>
-      <Questions size={50} color={"blue"}/>
+      <Questions size={50} color={colours.main}/>
       {/**console.log(ActiveTab)*/}
     </TouchableOpacity>}
 
     {ActiveTab!="questions" && <TouchableOpacity onPress={questionsactivate}>
-      <Questions1 size={50} color={"blue"}/>
+      <Questions1 size={50} color={colours.main}/>
       {/**console.log(ActiveTab)*/}
     </TouchableOpacity>}
     {ActiveTab==="questions" && <TouchableOpacity disabled={true} onPress={questionsactivate}>
-      <Questions size={50} color={"blue"}/>
+      <Questions size={50} color={colours.main}/>
       {/**console.log(ActiveTab)*/}
     </TouchableOpacity>}
 
@@ -67,9 +67,9 @@ const styles =StyleSheet.create({
         width:"100%",
         bottom:0,
         zIndex:999,
-        backgroundColor:"white",
+        backgroundColor:colours.bottomtab,
     },
-    wrapper2:{flexDirection:"row",justifyContent:"space-around",height:50,paddingTop:5,marginBottom:5}
+    wrapper2:{flexDirection:"row",justifyContent:"space-around",height:50,paddingTop:5,marginBottom:5,borderRadius: 10}
 
 
     
