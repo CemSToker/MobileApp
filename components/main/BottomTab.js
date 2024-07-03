@@ -68,8 +68,9 @@ const styles =StyleSheet.create({
         bottom:0,
         zIndex:999,
         backgroundColor:colours.bottomtab,
+        opacity: 0.75,
     },
-    wrapper2:{flexDirection:"row",justifyContent:"space-around",height:50,paddingTop:5,marginBottom:5,borderRadius: 10}
+    wrapper2:{flexDirection:"row",justifyContent:"space-around",height:55,paddingTop:5,marginBottom:5,borderRadius: 20}
 
 
     

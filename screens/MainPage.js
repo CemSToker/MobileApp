@@ -7,16 +7,18 @@ import SvgGradient from '../components/main/SvgGradient';
 
 function MainPage({ navigation }) {
   return(
+    <View style={styles.container}>
     <SvgGradient>
        <Text style={styles.text}>Smooth Gradient with SVG</Text>
+       
     </SvgGradient>
+    <BottomTab navigation={navigation} active={"main"}/>
+    </View>
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   overlay: {
     position: 'absolute',
