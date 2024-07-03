@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-
+import { colours } from '../../colours';
 const MultiColorGradient = ({ children }) => {
   return (
     <View style={styles.container}>
@@ -29,42 +29,42 @@ const styles = StyleSheet.create({
   gradient1: {
     top: 0,
     height: '14.29%',
-    backgroundColor: '#ff7e5f',
+    backgroundColor: colours.background[0],
   },
   gradient2: {
     top: '14.29%',
     height: '14.29%',
-    backgroundColor: '#ff8573',
+    backgroundColor: colours.background[1],
     opacity: 0.9,
   },
   gradient3: {
     top: '28.58%',
     height: '14.29%',
-    backgroundColor: '#feb47b',
+    backgroundColor: colours.background[2],
     opacity: 0.8,
   },
   gradient4: {
     top: '42.87%',
     height: '14.29%',
-    backgroundColor: '#8f9bdb',
+    backgroundColor: colours.background[3],
     opacity: 0.7,
   },
   gradient5: {
     top: '57.16%',
     height: '14.29%',
-    backgroundColor: '#6a82fb',
+    backgroundColor: colours.background[4],
     opacity: 0.6,
   },
   gradient6: {
     top: '71.45%',
     height: '14.29%',
-    backgroundColor: '#a766a3',
+    backgroundColor: colours.background[5],
     opacity: 0.5,
   },
   gradient7: {
     top: '85.74%',
     height: '14.29%',
-    backgroundColor: '#fc5c7d',
+    backgroundColor: colours.background[6],
     opacity: 0.4,
   },
   overlay: {

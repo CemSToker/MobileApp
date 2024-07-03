@@ -1,6 +1,6 @@
 export const colours = {
     main:"white",
-    background:["#CFCBD2","#CB98ED","#8B63DA","#3C21B7"],
+    background:["#3C21B7","#8B63DA","#CB98ED","#CFCBD2"],
     bottomtab:"#443F8A",
     easy:"red",
     mid:"red",
