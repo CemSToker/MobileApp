@@ -2,10 +2,29 @@ import React, { useEffect, useRef } from 'react'
 import BottomTab from '../components/main/BottomTab';
 import { Animated, StyleSheet, View, Text } from 'react-native';
 import { colours } from '../colours';
-import MultiColorGradient from '../components/main/MultiColorGradient';
 import SvgGradient from '../components/main/SvgGradient';
+import { storeObject } from '../AsyncStorage';
 
 function MainPage({ navigation }) {
+  storeObject('answeredQuestion', {
+
+    Alevel:[1,0,0],
+    
+    Sat:[1,1,1],
+    
+    Integral:[1,2,0],
+    
+    Differentiation:[1,2,0],
+    
+    Trigonometry:[1,2,0]
+    
+    });
+
+    storeObject('userInfo', {
+      points:12,
+      lastlogin:1,
+      lastchosen:"Alevel"
+    });
   return(
     <View style={styles.container}>
     <SvgGradient>
