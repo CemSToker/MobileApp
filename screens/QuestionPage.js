@@ -1,24 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { View, Text, ScrollView, StyleSheet, Platform } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import BottomTab from '../components/main/BottomTab';
 import { getObject } from '../AsyncStorage';
 import SvgGradientStatic from '../components/main/SvgGradientStatic';
+import QuestionCard from '../components/question/QuestionCard';
 
 const QuestionPage = ({ navigation }) => {
-  // State declarations
   const [last, setLast] = useState(1);
-  const [lastc, setLastc] = useState("Alevel");  // Last answered question topic
+  const [lastc, setLastc] = useState("Alevel");
   const [Alevel, setAlevel] = useState([0, 0, 0]);
   const [Sat, setSat] = useState([0, 0, 0]);
-  const [Integral, setIntegral] = useState([0, 0, 0]);
-  const [Differentiation, setDifferentiation] = useState([0, 0, 0]);
-  const [selectedTopic, setSelectedTopic] = useState("Alevel"); // State for ComboBox selection
+  const [Calculus1, setCalculus1] = useState([0, 0, 0]);
+
+  const [selectedTopic, setSelectedTopic] = useState("Alevel");
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState([
+    { label: 'A level', value: 'Alevel' },
+    { label: 'Sat', value: 'Sat' },
+    { label: 'Calculus 1', value: 'Calculus1' }
+  ]);
 
   const key1 = "userInfo";
   const key2 = "answeredQuestion";
 
-  const items = ['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5'];
+  const questionItems = ['Easy Question', 'Medium Question', 'Hard Question'];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,13 +33,12 @@ const QuestionPage = ({ navigation }) => {
       if (storedData1) {
         setLast(storedData1.lastlogin);
         setLastc(storedData1.lastchosen);
-        setSelectedTopic(storedData1.lastchosen)
+        setSelectedTopic(storedData1.lastchosen);
       }
       if (storedData2) {
         setAlevel(storedData2.Alevel);
         setSat(storedData2.Sat);
-        setIntegral(storedData2.Integral);
-        setDifferentiation(storedData2.Differentiation);
+        setCalculus1(storedData2.Calculus1);
       }
     };
 
@@ -43,21 +48,27 @@ const QuestionPage = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <SvgGradientStatic>
-        <Picker
-          selectedValue={selectedTopic}
-          style={styles.picker}
-          onValueChange={(itemValue, itemIndex) => setSelectedTopic(itemValue)}
-        >
-          <Picker.Item label="Alevel" value="Alevel" />
-          <Picker.Item label="Sat" value="Sat" />
-          <Picker.Item label="Integral" value="Integral" />
-          <Picker.Item label="Differentiation" value="Differentiation" />
-        </Picker>
+        <View style={styles.dropdownContainer}>
+          <DropDownPicker
+            open={open}
+            value={selectedTopic}
+            items={items}
+            setOpen={setOpen}
+            setValue={setSelectedTopic}
+            setItems={setItems}
+            containerStyle={styles.picker}
+            style={{ backgroundColor: '#fafafa' }}
+            dropDownContainerStyle={{ backgroundColor: '#fafafa', zIndex: 1000, elevation: 1000 }}
+            zIndex={1000}
+            elevation={1000}
+          />
+        </View>
+
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          {items.map((item, index) => (
-            <View key={index} style={styles.itemContainer}>
+          {questionItems.map((item, index) => (
+            <QuestionCard key={index} colour1={"red"} solved={1}>
               <Text style={styles.itemText}>{item}</Text>
-            </View>
+            </QuestionCard>
           ))}
         </ScrollView>
       </SvgGradientStatic>
@@ -69,21 +80,20 @@ const QuestionPage = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'transparent', // Ensure background is transparent
+    backgroundColor: 'transparent',
+  },
+  dropdownContainer: {
+    marginTop:30,
+    zIndex: 1000,
+    elevation: 1000,
   },
   picker: {
-    height: 50,
-    width: 150,
-    alignSelf: 'flex-start',
+    marginTop: 10,
+    width: '80%',
+    alignSelf: 'center',
   },
   scrollViewContent: {
     paddingVertical: 20,
-  },
-  itemContainer: {
-    marginBottom: 15,
-    padding: 10,
-    backgroundColor: 'white', // Content background
-    borderRadius: 5,
   },
   itemText: {
     fontSize: 16,
@@ -91,4 +101,3 @@ const styles = StyleSheet.create({
 });
 
 export default QuestionPage;
-

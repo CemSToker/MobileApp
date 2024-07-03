@@ -10,9 +10,7 @@ function MainPage({ navigation }) {
     storeObject('answeredQuestion', {
       Alevel:[1,0,0],
       Sat:[1,1,1],
-      Integral:[1,2,0],
-      Differentiation:[1,2,0],
-      Trigonometry:[1,2,0]
+      Calculus1:[1,1,1]
     });
 
     storeObject('userInfo', {

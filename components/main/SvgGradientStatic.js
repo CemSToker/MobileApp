@@ -1,15 +1,15 @@
 import React, { useRef, useEffect } from 'react';
 import { StyleSheet, View, Animated } from 'react-native';
 //import { colours } from '../../colours';
-
+/*
 const colors = [
     '#4b0082', '#800080', '#4b0082', '#551a8b', '#3a005f', 
     '#483d8b', '#6a5acd', '#7b68ee', '#00008b', '#0000cd', 
     '#191970', '#000080', '#2e0854', '#4b0082', '#2f4f4f', 
     '#1c1c1c', '#0f0f0f'
   ];
-  
-
+  */
+const colors = ["white","white"]
 const SvgGradientStatic = ({ children }) => {
   const colorAnim = useRef(new Animated.Value(0)).current;
 
