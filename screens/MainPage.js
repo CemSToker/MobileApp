@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SvgGradient from '../components/main/SvgGradient';
 import { getObject } from '../AsyncStorage';
 import { CheckIcon, XMarkIcon } from 'react-native-heroicons/outline'; // Assuming you're using heroicons
 
+const { width } = Dimensions.get('window');
+
 function MainPage({ navigation }) {
   const [last, setLast] = useState(1);
   const [lastc, setLastc] = useState("Alevel");
+  const [points, setPoints] = useState(0);
   const [Alevel, setAlevel] = useState([0, 0, 0]);
   const [Sat, setSat] = useState([0, 0, 0]);
   const [Calculus1, setCalculus1] = useState([0, 0, 0]);
@@ -30,6 +33,7 @@ function MainPage({ navigation }) {
       if (storedData1) {
         setLast(storedData1.lastlogin);
         setLastc(storedData1.lastchosen);
+        setPoints(storedData1.points);
         setSelectedTopic(storedData1.lastchosen);
       }
       if (storedData2) {
@@ -55,6 +59,9 @@ function MainPage({ navigation }) {
   return (
     <View style={styles.container}>
       <SvgGradient>
+        <View style={styles.topBar}>
+          <Text style={styles.pointsText}>Points: {points}</Text>
+        </View>
         <View style={styles.dropdownContainer}>
           <DropDownPicker
             open={open}
@@ -64,8 +71,8 @@ function MainPage({ navigation }) {
             setValue={setSelectedTopic}
             setItems={setItems}
             containerStyle={styles.picker}
-            style={{ backgroundColor: '#fafafa' }}
-            dropDownContainerStyle={{ backgroundColor: '#fafafa', zIndex: 1000, elevation: 1000 }}
+            style={styles.dropDown}
+            dropDownContainerStyle={styles.dropDownContainer}
             zIndex={1000}
             elevation={1000}
           />
@@ -74,7 +81,8 @@ function MainPage({ navigation }) {
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           <TouchableOpacity activeOpacity={0.7} onPress={() => {navigation.navigate('QuestionSpecificScreen', {
             iscorrect: showntopic[0],
-            otherParam: 'anything you want here',
+            difficulty: 0,   //0 difficulty means easy
+            topic: selectedTopic,
           })}}>
             <View style={[styles.card, { backgroundColor: 'red', shadowColor: 'black' }]}>
               <View style={styles.iconContainer}>
@@ -85,9 +93,13 @@ function MainPage({ navigation }) {
             </View>
           </TouchableOpacity>
 
+          
+
+
           <TouchableOpacity activeOpacity={0.7} onPress={() => {navigation.navigate('QuestionSpecificScreen', {
             iscorrect: showntopic[1],
-            otherParam: 'anything you want here',
+            difficulty: 1,   //1 difficulty means medium
+            topic: selectedTopic,
           })}}>
             <View style={[styles.card, { backgroundColor: 'blue', shadowColor: 'black' }]}>
               <View style={styles.iconContainer}>
@@ -98,10 +110,12 @@ function MainPage({ navigation }) {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.7} onPress={() => {{navigation.navigate('QuestionSpecificScreen', {
+
+          <TouchableOpacity activeOpacity={0.7} onPress={() => {navigation.navigate('QuestionSpecificScreen', {
             iscorrect: showntopic[2],
-            otherParam: 'anything you want here',
-          })}}}>
+            difficulty: 2,   //2 difficulty means hard
+            topic: selectedTopic,
+          })}}>
             <View style={[styles.card, { backgroundColor: 'green', shadowColor: 'black' }]}>
               <View style={styles.iconContainer}>
                 {showntopic[2] === 2 && <CheckIcon color="white" width={24} height={24} />}
@@ -121,28 +135,48 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'transparent', // Ensure background is transparent
   },
+  topBar: {
+    backgroundColor: '#fafafa',
+    padding: 10,
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  pointsText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
   dropdownContainer: {
-    marginTop: 30,
+    alignItems: 'center',
+    marginBottom: 10,
     zIndex: 1000,
     elevation: 1000,
   },
   picker: {
-    marginTop: 10,
     width: '80%',
-    alignSelf: 'center',
+  },
+  dropDown: {
+    backgroundColor: '#fafafa',
+  },
+  dropDownContainer: {
+    backgroundColor: '#fafafa',
+    zIndex: 1000,
+    elevation: 1000,
   },
   scrollViewContent: {
-    paddingVertical: 20,
+    alignItems: 'center',
   },
   card: {
-    marginVertical: 10,
-    marginHorizontal: 20,
+    width: width * 0.9, // Increased width to 90% of the screen width
+    height: 150,
+    marginBottom: 10,
     padding: 20,
     borderRadius: 10,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
     elevation: 5,
+    justifyContent: 'center',
   },
   iconContainer: {
     position: 'absolute',
@@ -151,6 +185,8 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 

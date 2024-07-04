@@ -5,14 +5,14 @@ import { ChevronDoubleLeftIcon } from 'react-native-heroicons/outline';
 
 
 const QuestionSpecificScreen = ({ navigation,route}) => {
-    const {iscorrect, otherParam } = route.params;
+    const {iscorrect, difficulty, topic} = route.params;
     const [colour,setcolour]= useState('#f5f5f5')
     useEffect(() => {
-        if (iscorrect === 0) {
+        if (iscorrect === 0) {   //Not attempted so you must give if they answer and make all buttons pressable
             setcolour('#f5f5f5');
         } else if (iscorrect === 1) {
-            setcolour("red");
-        } else if (iscorrect === 2) {
+            setcolour("red");      //Got it wrong          //If 1 or 2 show the correct answer
+        } else if (iscorrect === 2) {    //Got it correct
             setcolour("green");
         }
       }, [iscorrect]);
@@ -25,7 +25,7 @@ const QuestionSpecificScreen = ({ navigation,route}) => {
                         
                         <ChevronDoubleLeftIcon width={24} height={24} />
                     </TouchableOpacity>
-                    <Text style={styles.question}>{otherParam}</Text>
+                    <Text style={styles.question}></Text>
                     
                 </View>
                 
