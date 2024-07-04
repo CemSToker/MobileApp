@@ -9,7 +9,7 @@ const QuestionCard = (props) => {
 
     const cardBackgroundColor = colorScheme === 'dark' ? '#333' : 'white';
     const shadowColor = colorScheme === 'dark' ? '#888' : '#000';
-
+    
     return (
         <TouchableOpacity activeOpacity={0.7} onPress={props.onPress}>
             <View style={[styles.card, { backgroundColor: props.colour1, shadowColor: shadowColor }]}>

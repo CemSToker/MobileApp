@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, Platform } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import BottomTab from '../components/main/BottomTab';
-import { getObject } from '../AsyncStorage';
+import { getObject, storeObject } from '../AsyncStorage';
 import SvgGradientStatic from '../components/main/SvgGradientStatic';
 import QuestionCard from '../components/question/QuestionCard';
 
@@ -25,8 +25,9 @@ const QuestionPage = ({ navigation }) => {
   const key2 = "answeredQuestion";
 
   const questionItems = ['Easy Question', 'Medium Question', 'Hard Question'];
-
+  
   useEffect(() => {
+    
     const fetchData = async () => {
       const storedData1 = await getObject(key1);
       const storedData2 = await getObject(key2);

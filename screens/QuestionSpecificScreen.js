@@ -1,20 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import { ChevronDoubleLeftIcon } from 'react-native-heroicons/outline';
 
 
-const QuestionSpecificScreen = ({ navigation}) => {
+const QuestionSpecificScreen = ({ navigation,route}) => {
+    const {iscorrect, otherParam } = route.params;
+    const [colour,setcolour]= useState('#f5f5f5')
+    useEffect(() => {
+        if (iscorrect === 0) {
+            setcolour('#f5f5f5');
+        } else if (iscorrect === 1) {
+            setcolour("red");
+        } else if (iscorrect === 2) {
+            setcolour("green");
+        }
+      }, [iscorrect]);
     
-
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container,{backgroundColor:colour}]}>
             <View style={styles.card}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
+                        
                         <ChevronDoubleLeftIcon width={24} height={24} />
                     </TouchableOpacity>
-                    <Text style={styles.question}></Text>
+                    <Text style={styles.question}>{otherParam}</Text>
                     
                 </View>
                 
