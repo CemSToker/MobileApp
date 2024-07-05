@@ -1,35 +1,54 @@
+// QuestionSpecificScreen.js
 import React, { useEffect, useState } from 'react';
-import {SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native';
 import { ChevronDoubleLeftIcon } from 'react-native-heroicons/outline';
+import { fetchQuestions } from '../firebase';
 
+const QuestionSpecificScreen = ({ navigation, route }) => {
+    const { iscorrect, difficulty, topic } = route.params;
+    const [colour, setColour] = useState('#f5f5f5');
+    const [questions, setQuestions] = useState([]);
 
-const QuestionSpecificScreen = ({ navigation,route}) => {
-    const {iscorrect, difficulty, topic} = route.params;
-    const [colour,setcolour]= useState('#f5f5f5')
     useEffect(() => {
-        if (iscorrect === 0) {   //Not attempted so you must give if they answer and make all buttons pressable
-            setcolour('#f5f5f5');
-        } else if (iscorrect === 1) {
-            setcolour("red");      //Got it wrong          //If 1 or 2 show the correct answer
-        } else if (iscorrect === 2) {    //Got it correct
-            setcolour("green");
+        if (iscorrect === 0) { // Not attempted
+            setColour('#f5f5f5');
+        } else if (iscorrect === 1) { // Got it wrong
+            setColour("red");
+        } else if (iscorrect === 2) { // Got it correct
+            setColour("green");
         }
-      }, [iscorrect]);
-    
+    }, [iscorrect]);
+
+    useEffect(() => {
+        const loadQuestions = async () => {
+            try {
+                const fetchedQuestions = await fetchQuestions();
+                setQuestions(fetchedQuestions);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        loadQuestions();
+    }, []);
+    console.log(questions)
     return (
-        <SafeAreaView style={[styles.container,{backgroundColor:colour}]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colour }]}>
             <View style={styles.card}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => navigation.goBack()}>
-                        
                         <ChevronDoubleLeftIcon width={24} height={24} />
                     </TouchableOpacity>
                     <Text style={styles.question}></Text>
-                    
                 </View>
-                
-                
+                <View>
+                    {questions.map((question, index) => (
+                        <Text key={question.id} style={styles.question}>
+                            {index + 1}. {question.text}
+                        </Text>
+                    ))}
+                </View>
             </View>
         </SafeAreaView>
     );
@@ -39,14 +58,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#f5f5f5',  // Light gray background
+        backgroundColor: '#f5f5f5',
     },
     card: {
         flex: 1,
         backgroundColor: 'white',
-        borderRadius: 8,  // Rounded corners
-        padding: 16,  // Inner padding for the card content
-        margin: 16,  // Margin around the card
+        borderRadius: 8,
+        padding: 16,
+        margin: 16,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -54,7 +73,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.23,
         shadowRadius: 2.62,
-        elevation: 4,  // Elevation for Android
+        elevation: 4,
     },
     header: {
         flexDirection: 'row',
