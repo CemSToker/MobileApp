@@ -23,9 +23,9 @@ if (!getApps().length) {
 
 const db = getFirestore(firebaseApp);
 
-export const fetchQuestions = async () => {
+export const fetchQuestions = async (col) => {
   try {
-    const querySnapshot = await getDocs(collection(db, 'questions'));
+    const querySnapshot = await getDocs(collection(db, col));
     const questionsList = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data()

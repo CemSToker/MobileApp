@@ -1,7 +1,6 @@
 // QuestionSpecificScreen.js
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, Image } from 'react-native';
-import { TouchableOpacity } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { ChevronDoubleLeftIcon } from 'react-native-heroicons/outline';
 import { fetchQuestions } from '../firebase';
 
@@ -9,7 +8,7 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
     const { iscorrect, difficulty, topic } = route.params;
     const [colour, setColour] = useState('#f5f5f5');
     const [questions, setQuestions] = useState([]);
-
+    
     useEffect(() => {
         if (iscorrect === 0) { // Not attempted
             setColour('#f5f5f5');
@@ -23,7 +22,7 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
     useEffect(() => {
         const loadQuestions = async () => {
             try {
-                const fetchedQuestions = await fetchQuestions();
+                const fetchedQuestions = await fetchQuestions("Aleveleasy");
                 setQuestions(fetchedQuestions);
             } catch (error) {
                 console.error(error);
@@ -32,6 +31,15 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
 
         loadQuestions();
     }, []);
+
+    const handleOptionPress = (option,actualAnswer) => {
+        if (iscorrect === 0) {
+            if (option==actualAnswer){
+                console.log("Correct Answer")
+            }
+            // Handle option selection
+        }
+    };
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colour }]}>
@@ -51,10 +59,34 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
                                     style={styles.image}
                                 />
                             )}
-                            <Text style={styles.option}>Option 1: {question.option1}</Text>
-                            <Text style={styles.option}>Option 2: {question.option2}</Text>
-                            <Text style={styles.option}>Option 3: {question.option3}</Text>
-                            <Text style={styles.option}>Option 4: {question.option4}</Text>
+                            <TouchableOpacity 
+                                onPress={() => handleOptionPress(1,question.answer)}
+                                disabled={iscorrect !== 0}
+                                style={[styles.optionButton, iscorrect !== 0 && styles.disabledButton]}
+                            >
+                                <Text style={styles.optionText}>Option 1: {question.option1}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress={() => handleOptionPress(2,question.answer)}
+                                disabled={iscorrect !== 0}
+                                style={[styles.optionButton, iscorrect !== 0 && styles.disabledButton]}
+                            >
+                                <Text style={styles.optionText}>Option 2: {question.option2}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress={() => handleOptionPress(3,question.answer)}
+                                disabled={iscorrect !== 0}
+                                style={[styles.optionButton, iscorrect !== 0 && styles.disabledButton]}
+                            >
+                                <Text style={styles.optionText}>Option 3: {question.option3}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress={() => handleOptionPress(4,question.answer)}
+                                disabled={iscorrect !== 0}
+                                style={[styles.optionButton, iscorrect !== 0 && styles.disabledButton]}
+                            >
+                                <Text style={styles.optionText}>Option 4: {question.option4}</Text>
+                            </TouchableOpacity>
                         </View>
                     ))}
                 </View>
@@ -97,10 +129,19 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 16,
     },
-    option: {
+    optionButton: {
         marginTop: 5,
+        padding: 10,
+        borderRadius: 4,
+        backgroundColor: '#007bff',
+        alignItems: 'center',
+    },
+    disabledButton: {
+        backgroundColor: 'grey',
+    },
+    optionText: {
         fontSize: 14,
-        color: 'grey',
+        color: 'white',
     },
     image: {
         width: '100%',
