@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SvgGradient from '../components/main/SvgGradient';
 import { getObject } from '../AsyncStorage';
 import { CheckIcon, XMarkIcon } from 'react-native-heroicons/outline'; // Assuming you're using heroicons
+import { useFocusEffect } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
@@ -26,25 +27,27 @@ function MainPage({ navigation }) {
   const key1 = "userInfo";
   const key2 = "answeredQuestion";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const storedData1 = await getObject(key1);
-      const storedData2 = await getObject(key2);
-      if (storedData1) {
-        setLast(storedData1.lastlogin);
-        setLastc(storedData1.lastchosen);
-        setPoints(storedData1.points);
-        setSelectedTopic(storedData1.lastchosen);
-      }
-      if (storedData2) {
-        setAlevel(storedData2.Alevel);
-        setSat(storedData2.Sat);
-        setCalculus1(storedData2.Calculus1);
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        const storedData1 = await getObject(key1);
+        const storedData2 = await getObject(key2);
+        if (storedData1) {
+          setLast(storedData1.lastlogin);
+          setLastc(storedData1.lastchosen);
+          setPoints(storedData1.points);
+          setSelectedTopic(storedData1.lastchosen);
+        }
+        if (storedData2) {
+          setAlevel(storedData2.Alevel);
+          setSat(storedData2.Sat);
+          setCalculus1(storedData2.Calculus1);
+        }
+      };
 
-    fetchData();
-  }, []);
+      fetchData();
+    }, [])
+  );
 
   useEffect(() => {
     if (selectedTopic === "Alevel") {
@@ -83,6 +86,10 @@ function MainPage({ navigation }) {
             iscorrect: showntopic[0],
             difficulty: 0,   //0 difficulty means easy
             topic: selectedTopic,
+            p:points,
+            alevel:Alevel,
+            sat:Sat,
+            calculus1:Calculus1,
           })}}>
             <View style={[styles.card, { backgroundColor: 'red', shadowColor: 'black' }]}>
               <View style={styles.iconContainer}>
@@ -93,13 +100,14 @@ function MainPage({ navigation }) {
             </View>
           </TouchableOpacity>
 
-          
-
-
           <TouchableOpacity activeOpacity={0.7} onPress={() => {navigation.navigate('QuestionSpecificScreen', {
             iscorrect: showntopic[1],
             difficulty: 1,   //1 difficulty means medium
             topic: selectedTopic,
+            p:points,
+            alevel:Alevel,
+            sat:Sat,
+            calculus1:Calculus1,
           })}}>
             <View style={[styles.card, { backgroundColor: 'blue', shadowColor: 'black' }]}>
               <View style={styles.iconContainer}>
@@ -110,11 +118,14 @@ function MainPage({ navigation }) {
             </View>
           </TouchableOpacity>
 
-
           <TouchableOpacity activeOpacity={0.7} onPress={() => {navigation.navigate('QuestionSpecificScreen', {
             iscorrect: showntopic[2],
             difficulty: 2,   //2 difficulty means hard
             topic: selectedTopic,
+            p:points,
+            alevel:Alevel,
+            sat:Sat,
+            calculus1:Calculus1,
           })}}>
             <View style={[styles.card, { backgroundColor: 'green', shadowColor: 'black' }]}>
               <View style={styles.iconContainer}>

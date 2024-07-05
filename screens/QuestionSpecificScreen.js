@@ -3,12 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { ChevronDoubleLeftIcon } from 'react-native-heroicons/outline';
 import { fetchQuestions } from '../firebase';
+import { storeObject } from '../AsyncStorage';
 
 const QuestionSpecificScreen = ({ navigation, route }) => {
-    const { iscorrect, difficulty, topic } = route.params;
+    const { iscorrect, difficulty, topic,p,alevel,sat,calculus1 } = route.params; //difficulty 0/1/2 easy to hard
     const [colour, setColour] = useState('#f5f5f5');
     const [questions, setQuestions] = useState([]);
-    
+    const date = new Date();
     useEffect(() => {
         if (iscorrect === 0) { // Not attempted
             setColour('#f5f5f5');
@@ -34,10 +35,27 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
 
     const handleOptionPress = (option,actualAnswer) => {
         if (iscorrect === 0) {
+
             if (option==actualAnswer){
                 console.log("Correct Answer")
-            }
-            // Handle option selection
+                let temp= p //This part is used to increment the points
+                const myObject1={
+                        points:temp+1,
+                        lastlogin:date.getDate(),
+                        lastchosen:topic,
+
+                }
+                console.log(calculus1)
+
+                
+                storeObject('userInfo', myObject1);
+                console.log(p)
+                console.log(topic,difficulty)
+                
+                //storeObject('answeredQuestion', myObject2);
+
+            }   //Up to this point is if answer is correct
+            
         }
     };
 
