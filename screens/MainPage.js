@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SvgGradient from '../components/main/SvgGradient';
-import { getObject } from '../AsyncStorage';
+import { getObject, storeObject } from '../AsyncStorage';
 import { CheckIcon, XMarkIcon } from 'react-native-heroicons/outline'; // Assuming you're using heroicons
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -50,13 +50,31 @@ function MainPage({ navigation }) {
   );
 
   useEffect(() => {
+    let myObject1;
     if (selectedTopic === "Alevel") {
       setShowntopic(Alevel);
+      myObject1={
+        points:points,
+        lastlogin:last,
+        lastchosen:"Alevel",
+    }
     } else if (selectedTopic === "Sat") {
       setShowntopic(Sat);
+      myObject1={
+        points:points,
+        lastlogin:last,
+        lastchosen:"Sat",
+    }
     } else if (selectedTopic === "Calculus1") {
       setShowntopic(Calculus1);
+      myObject1={
+        points:points,
+        lastlogin:last,
+        lastchosen:"Calculus1",
     }
+    }
+    storeObject('userInfo', myObject1);
+    //storeObject('answeredQuestion', {Alevel:[0,0,0],Sat:[0,0,0],Calculus1:[0,0,0]})  
   }, [selectedTopic, Alevel, Sat, Calculus1]);
 
   return (
@@ -93,8 +111,8 @@ function MainPage({ navigation }) {
           })}}>
             <View style={[styles.card, { backgroundColor: 'red', shadowColor: 'black' }]}>
               <View style={styles.iconContainer}>
-                {showntopic[0] === 2 && <CheckIcon color="white" width={24} height={24} />}
-                {showntopic[0] === 1 && <XMarkIcon color="white" width={24} height={24} />}
+                {showntopic[0] === 1 && <CheckIcon color="white" width={24} height={24} />}
+                {showntopic[0] === 2 && <XMarkIcon color="white" width={24} height={24} />}
               </View>
               <Text style={styles.itemText}>Easy Question</Text>
             </View>
@@ -111,8 +129,8 @@ function MainPage({ navigation }) {
           })}}>
             <View style={[styles.card, { backgroundColor: 'blue', shadowColor: 'black' }]}>
               <View style={styles.iconContainer}>
-                {showntopic[1] === 2 && <CheckIcon color="white" width={24} height={24} />}
-                {showntopic[1] === 1 && <XMarkIcon color="white" width={24} height={24} />}
+                {showntopic[1] === 1 && <CheckIcon color="white" width={24} height={24} />}
+                {showntopic[1] === 2 && <XMarkIcon color="white" width={24} height={24} />}
               </View>
               <Text style={styles.itemText}>Medium Question</Text>
             </View>
@@ -129,8 +147,8 @@ function MainPage({ navigation }) {
           })}}>
             <View style={[styles.card, { backgroundColor: 'green', shadowColor: 'black' }]}>
               <View style={styles.iconContainer}>
-                {showntopic[2] === 2 && <CheckIcon color="white" width={24} height={24} />}
-                {showntopic[2] === 1 && <XMarkIcon color="white" width={24} height={24} />}
+                {showntopic[2] === 1 && <CheckIcon color="white" width={24} height={24} />}
+                {showntopic[2] === 2 && <XMarkIcon color="white" width={24} height={24} />}
               </View>
               <Text style={styles.itemText}>Hard Question</Text>
             </View>

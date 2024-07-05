@@ -14,9 +14,9 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
         if (iscorrect === 0) { // Not attempted
             setColour('#f5f5f5');
         } else if (iscorrect === 1) { // Got it wrong
-            setColour("red");
-        } else if (iscorrect === 2) { // Got it correct
             setColour("green");
+        } else if (iscorrect === 2) { // Got it correct
+            setColour("red");
         }
     }, [iscorrect]);
 
@@ -51,13 +51,113 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
                 storeObject('userInfo', myObject1);
                 console.log(p)
                 console.log(topic,difficulty)
+                //Below is used to set the answered and non answered questions for the given topic
+                setNewArrays(alevel,sat,calculus1,topic,difficulty,true)
                 
-                //storeObject('answeredQuestion', myObject2);
 
             }   //Up to this point is if answer is correct
             
         }
     };
+    const setNewArrays = (array1,array2,array3,topic,difficulty,correct) => {
+        //storeObject('answeredQuestion', myObject2);
+        let answeredobj;
+        if (correct){
+            if (topic=="Sat"){
+                switch(difficulty) {
+                    case 0:
+                        answeredobj={
+                            Alevel:array1,
+                            Sat:[1,array2[1],array2[2]],
+                            Calculus1:array3,
+    
+                          }
+                          
+                      break
+                    case 1:
+                        answeredobj={
+                            Alevel:array1,
+                            Sat:[array2[0],1,array2[2]],
+                            Calculus1:array3,
+    
+                          }
+                      break;
+                    case 2:
+                        answeredobj={
+                            Alevel:array1,
+                            Sat:[array2[0],array2[1],1],
+                            Calculus1:array3,
+    
+                          }
+                        break;
+                  }
+                
+            }else if (topic =="Calculus1"){
+                switch(difficulty) {
+                    case 0:
+                        answeredobj={
+                            Alevel:array1,
+                            Sat:array2,
+                            Calculus1:[1,array3[1],array3[2]],
+    
+                          }
+                          
+                      break
+                    case 1:
+                        answeredobj={
+                            Alevel:array1,
+                            Sat:array2,
+                            Calculus1:[array3[0],1,array3[2]],
+    
+                          }
+                      break;
+                    case 2:
+                        answeredobj={
+                            Alevel:array1,
+                            Sat:array2,
+                            Calculus1:[array3[0],array3[1],1],
+    
+                          }
+                        break;
+                  }
+            }else{
+                switch(difficulty) {
+                    case 0:
+                        answeredobj={
+                            Alevel:[1,array1[1],array1[2]],
+                            Sat:array2,
+                            Calculus1:array3,
+    
+                          }
+                          
+                      break
+                    case 1:
+                        answeredobj={
+                            Alevel:[array1[0],1,array1[2]],
+                            Sat:array2,
+                            Calculus1:array3,
+    
+                          }
+                      break;
+                    case 2:
+                        answeredobj={
+                            Alevel:[array1[0],array1[1],1],
+                            Sat:array2,
+                            Calculus1:array3,
+    
+                          }
+                        break;
+                  }
+            }
+        }   
+        else{
+           console.log("Else girdi")
+
+        }
+        storeObject('answeredQuestion', answeredobj);
+    };
+
+
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colour }]}>
