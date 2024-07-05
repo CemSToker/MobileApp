@@ -49,7 +49,7 @@ function MainPage({ navigation }) {
     }, [])
   );
 
-  useEffect(() => {
+  useEffect(() => {    //This part saves the last chosen topic and also sets it for the picker
     let myObject1;
     if (selectedTopic === "Alevel") {
       setShowntopic(Alevel);

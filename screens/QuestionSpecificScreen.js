@@ -6,25 +6,36 @@ import { fetchQuestions } from '../firebase';
 import { storeObject } from '../AsyncStorage';
 
 const QuestionSpecificScreen = ({ navigation, route }) => {
-    const { iscorrect, difficulty, topic,p,alevel,sat,calculus1 } = route.params; //difficulty 0/1/2 easy to hard
+    const { iscorrect, difficulty, topic, p, alevel, sat, calculus1 } = route.params; // difficulty 0/1/2 easy to hard
+    const [correct, setCorrect] = useState(iscorrect);
     const [colour, setColour] = useState('#f5f5f5');
     const [questions, setQuestions] = useState([]);
     const date = new Date();
+    let zor;
+    if (difficulty === 0) {
+        zor = "easy";
+    } else if (difficulty === 1) {
+        zor = "med";
+    } else {
+        zor = "hard";
+    }
+
     useEffect(() => {
-        if (iscorrect === 0) { // Not attempted
+        if (correct === 0) { // Not attempted
             setColour('#f5f5f5');
-        } else if (iscorrect === 1) { // Got it wrong
-            setColour("green");
-        } else if (iscorrect === 2) { // Got it correct
-            setColour("red");
+        } else if (correct === 1) { // Got it correct
+            setColour('green');
+        } else if (correct === 2) { // Got it wrong
+            setColour('red');
         }
-    }, [iscorrect]);
+    }, [correct]);
 
     useEffect(() => {
         const loadQuestions = async () => {
             try {
-                const fetchedQuestions = await fetchQuestions("Aleveleasy");
-                setQuestions(fetchedQuestions);
+                const fetchedQuestions = await fetchQuestions(topic + zor); // This should be changed to whatever is chosen
+                const validQuestions = fetchedQuestions.filter(q => q.option1 && q.option2 && q.option3 && q.option4); // Adjust validation criteria as needed
+                setQuestions(validQuestions);
             } catch (error) {
                 console.error(error);
             }
@@ -33,131 +44,179 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
         loadQuestions();
     }, []);
 
-    const handleOptionPress = (option,actualAnswer) => {
-        if (iscorrect === 0) {
-
-            if (option==actualAnswer){
-                console.log("Correct Answer")
-                let temp= p //This part is used to increment the points
-                const myObject1={
-                        points:temp+1,
-                        lastlogin:date.getDate(),
-                        lastchosen:topic,
-
-                }
-                console.log(calculus1)
-
-                
+    const handleOptionPress = (option, actualAnswer) => {
+        if (correct === 0) {
+            if (option === actualAnswer) {
+                console.log("Correct Answer");
+                let temp = p; // This part is used to increment the points
+                const myObject1 = {
+                    points: temp + 1,
+                    lastlogin: date.getDate(),
+                    lastchosen: topic,
+                };
                 storeObject('userInfo', myObject1);
-                console.log(p)
-                console.log(topic,difficulty)
-                //Below is used to set the answered and non answered questions for the given topic
-                setNewArrays(alevel,sat,calculus1,topic,difficulty,true)
-                
-
-            }   //Up to this point is if answer is correct
-            
+                setNewArrays(alevel, sat, calculus1, topic, difficulty, true);
+            } else {
+                setNewArrays(alevel, sat, calculus1, topic, difficulty, false);
+            }
         }
     };
-    const setNewArrays = (array1,array2,array3,topic,difficulty,correct) => {
-        //storeObject('answeredQuestion', myObject2);
-        let answeredobj;
-        if (correct){
-            if (topic=="Sat"){
-                switch(difficulty) {
-                    case 0:
-                        answeredobj={
-                            Alevel:array1,
-                            Sat:[1,array2[1],array2[2]],
-                            Calculus1:array3,
-    
-                          }
-                          
-                      break
-                    case 1:
-                        answeredobj={
-                            Alevel:array1,
-                            Sat:[array2[0],1,array2[2]],
-                            Calculus1:array3,
-    
-                          }
-                      break;
-                    case 2:
-                        answeredobj={
-                            Alevel:array1,
-                            Sat:[array2[0],array2[1],1],
-                            Calculus1:array3,
-    
-                          }
-                        break;
-                  }
-                
-            }else if (topic =="Calculus1"){
-                switch(difficulty) {
-                    case 0:
-                        answeredobj={
-                            Alevel:array1,
-                            Sat:array2,
-                            Calculus1:[1,array3[1],array3[2]],
-    
-                          }
-                          
-                      break
-                    case 1:
-                        answeredobj={
-                            Alevel:array1,
-                            Sat:array2,
-                            Calculus1:[array3[0],1,array3[2]],
-    
-                          }
-                      break;
-                    case 2:
-                        answeredobj={
-                            Alevel:array1,
-                            Sat:array2,
-                            Calculus1:[array3[0],array3[1],1],
-    
-                          }
-                        break;
-                  }
-            }else{
-                switch(difficulty) {
-                    case 0:
-                        answeredobj={
-                            Alevel:[1,array1[1],array1[2]],
-                            Sat:array2,
-                            Calculus1:array3,
-    
-                          }
-                          
-                      break
-                    case 1:
-                        answeredobj={
-                            Alevel:[array1[0],1,array1[2]],
-                            Sat:array2,
-                            Calculus1:array3,
-    
-                          }
-                      break;
-                    case 2:
-                        answeredobj={
-                            Alevel:[array1[0],array1[1],1],
-                            Sat:array2,
-                            Calculus1:array3,
-    
-                          }
-                        break;
-                  }
-            }
-        }   
-        else{
-           console.log("Else girdi")
 
+    const setNewArrays = (array1, array2, array3, topic, difficulty, isCorrect) => {
+        let answeredobj;
+        if (isCorrect) {
+            setCorrect(1);
+            if (topic === "Sat") {
+                switch (difficulty) {
+                    case 0:
+                        answeredobj = {
+                            Alevel: array1,
+                            Sat: [1, array2[1], array2[2]],
+                            Calculus1: array3,
+                        };
+                        break;
+                    case 1:
+                        answeredobj = {
+                            Alevel: array1,
+                            Sat: [array2[0], 1, array2[2]],
+                            Calculus1: array3,
+                        };
+                        break;
+                    case 2:
+                        answeredobj = {
+                            Alevel: array1,
+                            Sat: [array2[0], array2[1], 1],
+                            Calculus1: array3,
+                        };
+                        break;
+                }
+            } else if (topic === "Calculus1") {
+                switch (difficulty) {
+                    case 0:
+                        answeredobj = {
+                            Alevel: array1,
+                            Sat: array2,
+                            Calculus1: [1, array3[1], array3[2]],
+                        };
+                        break;
+                    case 1:
+                        answeredobj = {
+                            Alevel: array1,
+                            Sat: array2,
+                            Calculus1: [array3[0], 1, array3[2]],
+                        };
+                        break;
+                    case 2:
+                        answeredobj = {
+                            Alevel: array1,
+                            Sat: array2,
+                            Calculus1: [array3[0], array3[1], 1],
+                        };
+                        break;
+                }
+            } else {
+                switch (difficulty) {
+                    case 0:
+                        answeredobj = {
+                            Alevel: [1, array1[1], array1[2]],
+                            Sat: array2,
+                            Calculus1: array3,
+                        };
+                        break;
+                    case 1:
+                        answeredobj = {
+                            Alevel: [array1[0], 1, array1[2]],
+                            Sat: array2,
+                            Calculus1: array3,
+                        };
+                        break;
+                    case 2:
+                        answeredobj = {
+                            Alevel: [array1[0], array1[1], 1],
+                            Sat: array2,
+                            Calculus1: array3,
+                        };
+                        break;
+                }
+            }
+        } else {
+            if (topic === "Sat") {
+                switch (difficulty) {
+                    case 0:
+                        answeredobj = {
+                            Alevel: array1,
+                            Sat: [2, array2[1], array2[2]],
+                            Calculus1: array3,
+                        };
+                        break;
+                    case 1:
+                        answeredobj = {
+                            Alevel: array1,
+                            Sat: [array2[0], 2, array2[2]],
+                            Calculus1: array3,
+                        };
+                        break;
+                    case 2:
+                        answeredobj = {
+                            Alevel: array1,
+                            Sat: [array2[0], array2[1], 2],
+                            Calculus1: array3,
+                        };
+                        break;
+                }
+            } else if (topic === "Calculus1") {
+                switch (difficulty) {
+                    case 0:
+                        answeredobj = {
+                            Alevel: array1,
+                            Sat: array2,
+                            Calculus1: [2, array3[1], array3[2]],
+                        };
+                        break;
+                    case 1:
+                        answeredobj = {
+                            Alevel: array1,
+                            Sat: array2,
+                            Calculus1: [array3[0], 2, array3[2]],
+                        };
+                        break;
+                    case 2:
+                        answeredobj = {
+                            Alevel: array1,
+                            Sat: array2,
+                            Calculus1: [array3[0], array3[1], 2],
+                        };
+                        break;
+                }
+            } else {
+                switch (difficulty) {
+                    case 0:
+                        answeredobj = {
+                            Alevel: [2, array1[1], array1[2]],
+                            Sat: array2,
+                            Calculus1: array3,
+                        };
+                        break;
+                    case 1:
+                        answeredobj = {
+                            Alevel: [array1[0], 2, array1[2]],
+                            Sat: array2,
+                            Calculus1: array3,
+                        };
+                        break;
+                    case 2:
+                        answeredobj = {
+                            Alevel: [array1[0], array1[1], 2],
+                            Sat: array2,
+                            Calculus1: array3,
+                        };
+                        break;
+                }
+            }
+            setCorrect(2);
         }
         storeObject('answeredQuestion', answeredobj);
     };
-
-
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: colour }]}>
@@ -169,44 +228,50 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
                     <Text style={styles.question}></Text>
                 </View>
                 <View>
-                    {questions.map((question, index) => (
-                        <View key={question.id} style={styles.questionBlock}>
-                            {question.url && (
-                                <Image
-                                    source={{ uri: question.url }}
-                                    style={styles.image}
-                                />
-                            )}
-                            <TouchableOpacity 
-                                onPress={() => handleOptionPress(1,question.answer)}
-                                disabled={iscorrect !== 0}
-                                style={[styles.optionButton, iscorrect !== 0 && styles.disabledButton]}
-                            >
-                                <Text style={styles.optionText}>Option 1: {question.option1}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                                onPress={() => handleOptionPress(2,question.answer)}
-                                disabled={iscorrect !== 0}
-                                style={[styles.optionButton, iscorrect !== 0 && styles.disabledButton]}
-                            >
-                                <Text style={styles.optionText}>Option 2: {question.option2}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                                onPress={() => handleOptionPress(3,question.answer)}
-                                disabled={iscorrect !== 0}
-                                style={[styles.optionButton, iscorrect !== 0 && styles.disabledButton]}
-                            >
-                                <Text style={styles.optionText}>Option 3: {question.option3}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                                onPress={() => handleOptionPress(4,question.answer)}
-                                disabled={iscorrect !== 0}
-                                style={[styles.optionButton, iscorrect !== 0 && styles.disabledButton]}
-                            >
-                                <Text style={styles.optionText}>Option 4: {question.option4}</Text>
-                            </TouchableOpacity>
+                    {questions.length === 0 ? (
+                        <View style={styles.noQuestionsContainer}>
+                            <Text style={styles.noQuestionsText}>No Question Uploaded Today</Text>
                         </View>
-                    ))}
+                    ) : (
+                        questions.map((question, index) => (
+                            <View key={question.id} style={styles.questionBlock}>
+                                {question.url && (
+                                    <Image
+                                        source={{ uri: question.url }}
+                                        style={styles.image}
+                                    />
+                                )}
+                                <TouchableOpacity 
+                                    onPress={() => handleOptionPress(1, question.answer)}
+                                    disabled={correct !== 0}
+                                    style={[styles.optionButton, correct !== 0 && styles.disabledButton, question.answer === 1 && correct !== 0 && { backgroundColor: 'green' }]}
+                                >
+                                    <Text style={styles.optionText}>Option 1: {question.option1}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity 
+                                    onPress={() => handleOptionPress(2, question.answer)}
+                                    disabled={correct !== 0}
+                                    style={[styles.optionButton, correct !== 0 && styles.disabledButton, question.answer === 2 && correct !== 0 && { backgroundColor: 'green' }]}
+                                >
+                                    <Text style={styles.optionText}>Option 2: {question.option2}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity 
+                                    onPress={() => handleOptionPress(3, question.answer)}
+                                    disabled={correct !== 0}
+                                    style={[styles.optionButton, correct !== 0 && styles.disabledButton, question.answer === 3 && correct !== 0 && { backgroundColor: 'green' }]}
+                                >
+                                    <Text style={styles.optionText}>Option 3: {question.option3}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity 
+                                    onPress={() => handleOptionPress(4, question.answer)}
+                                    disabled={correct !== 0}
+                                    style={[styles.optionButton, correct !== 0 && styles.disabledButton, question.answer === 4 && correct !== 0 && { backgroundColor: 'green' }]}
+                                >
+                                    <Text style={styles.optionText}>Option 4: {question.option4}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        ))
+                    )}
                 </View>
             </View>
         </SafeAreaView>
@@ -254,6 +319,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#007bff',
         alignItems: 'center',
     },
+    correctButton: {
+        backgroundColor: 'green',
+    },
+    incorrectButton: {
+        backgroundColor: 'red',
+    },
     disabledButton: {
         backgroundColor: 'grey',
     },
@@ -267,6 +338,17 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
         marginTop: 2,
     },
+    noQuestionsContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noQuestionsText: {
+        fontSize: 18,
+        color: 'red',
+    },
 });
 
 export default QuestionSpecificScreen;
+
+
