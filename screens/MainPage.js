@@ -9,7 +9,7 @@ import { useFocusEffect } from '@react-navigation/native';
 const { width } = Dimensions.get('window');
 
 function MainPage({ navigation }) {
-  const [last, setLast] = useState(1);
+  const [last, setLast] = useState(null);
   const [lastc, setLastc] = useState("Alevel");
   const [points, setPoints] = useState(0);
   const [Alevel, setAlevel] = useState([0, 0, 0]);
@@ -18,6 +18,8 @@ function MainPage({ navigation }) {
   const [showntopic, setShowntopic] = useState([0, 0, 0]);
   const [selectedTopic, setSelectedTopic] = useState("Alevel");
   const [open, setOpen] = useState(false);
+  const date = new Date();
+  const currentDay = date.getDate();
   const [items, setItems] = useState([
     { label: 'A level', value: 'Alevel' },
     { label: 'Sat', value: 'Sat' },
@@ -27,55 +29,76 @@ function MainPage({ navigation }) {
   const key1 = "userInfo";
   const key2 = "answeredQuestion";
 
+  const checkAndResetQuestions = async (storedLastLogin) => {
+    try {
+      if (storedLastLogin !== currentDay) {
+        await storeObject('answeredQuestion', { Alevel: [0, 0, 0], Sat: [0, 0, 0], Calculus1: [0, 0, 0] });
+        console.log("Questions reset");
+        await storeObject(key1, { lastlogin: currentDay });
+        setLast(currentDay); // Update last state variable only when it changes
+      } else {
+        console.log("Logged on same day");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useFocusEffect(
     useCallback(() => {
       const fetchData = async () => {
         const storedData1 = await getObject(key1);
         const storedData2 = await getObject(key2);
+
+        const storedLastLogin = storedData1 ? storedData1.lastlogin : currentDay;
+        
         if (storedData1) {
           setLast(storedData1.lastlogin);
           setLastc(storedData1.lastchosen);
           setPoints(storedData1.points);
           setSelectedTopic(storedData1.lastchosen);
         }
+        
         if (storedData2) {
           setAlevel(storedData2.Alevel);
           setSat(storedData2.Sat);
           setCalculus1(storedData2.Calculus1);
         }
+        
+        await checkAndResetQuestions(storedLastLogin);
       };
-
+      
       fetchData();
     }, [])
   );
 
-  useEffect(() => {    //This part saves the last chosen topic and also sets it for the picker
+  useEffect(() => {
     let myObject1;
     if (selectedTopic === "Alevel") {
       setShowntopic(Alevel);
-      myObject1={
-        points:points,
-        lastlogin:last,
-        lastchosen:"Alevel",
-    }
+      myObject1 = {
+        points: points,
+        lastlogin: last,
+        lastchosen: "Alevel",
+      };
     } else if (selectedTopic === "Sat") {
       setShowntopic(Sat);
-      myObject1={
-        points:points,
-        lastlogin:last,
-        lastchosen:"Sat",
-    }
+      myObject1 = {
+        points: points,
+        lastlogin: last,
+        lastchosen: "Sat",
+      };
     } else if (selectedTopic === "Calculus1") {
       setShowntopic(Calculus1);
-      myObject1={
-        points:points,
-        lastlogin:last,
-        lastchosen:"Calculus1",
+      myObject1 = {
+        points: points,
+        lastlogin: last,
+        lastchosen: "Calculus1",
+      };
     }
-    }
+
     storeObject('userInfo', myObject1);
-    //storeObject('answeredQuestion', {Alevel:[0,0,0],Sat:[0,0,0],Calculus1:[0,0,0]})  
-  }, [selectedTopic, Alevel, Sat, Calculus1]);
+  }, [selectedTopic, Alevel, Sat, Calculus1, last]);
 
   return (
     <View style={styles.container}>
@@ -100,15 +123,18 @@ function MainPage({ navigation }) {
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          <TouchableOpacity activeOpacity={0.7} onPress={() => {navigation.navigate('QuestionSpecificScreen', {
-            iscorrect: showntopic[0],
-            difficulty: 0,   //0 difficulty means easy
-            topic: selectedTopic,
-            p:points,
-            alevel:Alevel,
-            sat:Sat,
-            calculus1:Calculus1,
-          })}}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => {
+            navigation.navigate('QuestionSpecificScreen', {
+              iscorrect: showntopic[0],
+              difficulty: 0,   // 0 difficulty means easy
+              topic: selectedTopic,
+              p: points,
+              alevel: Alevel,
+              sat: Sat,
+              calculus1: Calculus1,
+              lastlogin: last,
+            });
+          }}>
             <View style={[styles.card, { backgroundColor: 'red', shadowColor: 'black' }]}>
               <View style={styles.iconContainer}>
                 {showntopic[0] === 1 && <CheckIcon color="white" width={24} height={24} />}
@@ -118,15 +144,18 @@ function MainPage({ navigation }) {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.7} onPress={() => {navigation.navigate('QuestionSpecificScreen', {
-            iscorrect: showntopic[1],
-            difficulty: 1,   //1 difficulty means medium
-            topic: selectedTopic,
-            p:points,
-            alevel:Alevel,
-            sat:Sat,
-            calculus1:Calculus1,
-          })}}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => {
+            navigation.navigate('QuestionSpecificScreen', {
+              iscorrect: showntopic[1],
+              difficulty: 1,   // 1 difficulty means medium
+              topic: selectedTopic,
+              p: points,
+              alevel: Alevel,
+              sat: Sat,
+              calculus1: Calculus1,
+              lastlogin: last,
+            });
+          }}>
             <View style={[styles.card, { backgroundColor: 'blue', shadowColor: 'black' }]}>
               <View style={styles.iconContainer}>
                 {showntopic[1] === 1 && <CheckIcon color="white" width={24} height={24} />}
@@ -136,15 +165,18 @@ function MainPage({ navigation }) {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.7} onPress={() => {navigation.navigate('QuestionSpecificScreen', {
-            iscorrect: showntopic[2],
-            difficulty: 2,   //2 difficulty means hard
-            topic: selectedTopic,
-            p:points,
-            alevel:Alevel,
-            sat:Sat,
-            calculus1:Calculus1,
-          })}}>
+          <TouchableOpacity activeOpacity={0.7} onPress={() => {
+            navigation.navigate('QuestionSpecificScreen', {
+              iscorrect: showntopic[2],
+              difficulty: 2,   // 2 difficulty means hard
+              topic: selectedTopic,
+              p: points,
+              alevel: Alevel,
+              sat: Sat,
+              calculus1: Calculus1,
+              lastlogin: last,
+            });
+          }}>
             <View style={[styles.card, { backgroundColor: 'green', shadowColor: 'black' }]}>
               <View style={styles.iconContainer}>
                 {showntopic[2] === 1 && <CheckIcon color="white" width={24} height={24} />}

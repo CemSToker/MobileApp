@@ -6,7 +6,7 @@ import { fetchQuestions } from '../firebase';
 import { storeObject } from '../AsyncStorage';
 
 const QuestionSpecificScreen = ({ navigation, route }) => {
-    const { iscorrect, difficulty, topic, p, alevel, sat, calculus1 } = route.params; // difficulty 0/1/2 easy to hard
+    const { iscorrect, difficulty, topic, p, alevel, sat, calculus1,lastlogin } = route.params; // difficulty 0/1/2 easy to hard
     const [correct, setCorrect] = useState(iscorrect);
     const [colour, setColour] = useState('#f5f5f5');
     const [questions, setQuestions] = useState([]);
@@ -31,6 +31,18 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
     }, [correct]);
 
     useEffect(() => {
+        const checkAndResetQuestions = async () => {
+            try {
+                if (lastlogin !== date.getDate()) {
+                    await storeObject('answeredQuestion', { Alevel:[0,0,0],Sat:[0,0,0],Calculus1:[0,0,0]});
+                }else{
+                    console.log("Logged on same day")
+                }
+                
+            } catch (error) {
+                console.error(error);
+            }
+        };
         const loadQuestions = async () => {
             try {
                 const fetchedQuestions = await fetchQuestions(topic + zor); // This should be changed to whatever is chosen
@@ -41,6 +53,7 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
             }
         };
 
+        checkAndResetQuestions()
         loadQuestions();
     }, []);
 
