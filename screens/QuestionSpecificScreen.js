@@ -1,4 +1,3 @@
-// QuestionSpecificScreen.js
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { ChevronDoubleLeftIcon } from 'react-native-heroicons/outline';
@@ -6,7 +5,7 @@ import { fetchQuestions } from '../firebase';
 import { storeObject } from '../AsyncStorage';
 
 const QuestionSpecificScreen = ({ navigation, route }) => {
-    const { iscorrect, difficulty, topic, p, alevel, sat, calculus1,lastlogin } = route.params; // difficulty 0/1/2 easy to hard
+    const { iscorrect, difficulty, topic, p, alevel, sat, calculus1, lastlogin } = route.params; // difficulty 0/1/2 easy to hard
     const [correct, setCorrect] = useState(iscorrect);
     const [colour, setColour] = useState('#f5f5f5');
     const [questions, setQuestions] = useState([]);
@@ -31,18 +30,6 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
     }, [correct]);
 
     useEffect(() => {
-        const checkAndResetQuestions = async () => {
-            try {
-                if (lastlogin !== date.getDate()) {
-                    await storeObject('answeredQuestion', { Alevel:[0,0,0],Sat:[0,0,0],Calculus1:[0,0,0]});
-                }else{
-                    console.log("Logged on same day")
-                }
-                
-            } catch (error) {
-                console.error(error);
-            }
-        };
         const loadQuestions = async () => {
             try {
                 const fetchedQuestions = await fetchQuestions(topic + zor); // This should be changed to whatever is chosen
@@ -52,8 +39,6 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
                 console.error(error);
             }
         };
-
-        checkAndResetQuestions()
         loadQuestions();
     }, []);
 
@@ -238,7 +223,7 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
                     <TouchableOpacity onPress={() => navigation.goBack()}>
                         <ChevronDoubleLeftIcon width={24} height={24} />
                     </TouchableOpacity>
-                    <Text style={styles.question}></Text>
+                    <Text style={styles.questionText}></Text>
                 </View>
                 <View>
                     {questions.length === 0 ? (
@@ -246,44 +231,42 @@ const QuestionSpecificScreen = ({ navigation, route }) => {
                             <Text style={styles.noQuestionsText}>No Question Uploaded Today</Text>
                         </View>
                     ) : (
-                        questions.map((question, index) => (
-                            <View key={question.id} style={styles.questionBlock}>
-                                {question.url && (
-                                    <Image
-                                        source={{ uri: question.url }}
-                                        style={styles.image}
-                                    />
-                                )}
-                                <TouchableOpacity 
-                                    onPress={() => handleOptionPress(1, question.answer)}
-                                    disabled={correct !== 0}
-                                    style={[styles.optionButton, correct !== 0 && styles.disabledButton, question.answer === 1 && correct !== 0 && { backgroundColor: 'green' }]}
-                                >
-                                    <Text style={styles.optionText}>Option 1: {question.option1}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity 
-                                    onPress={() => handleOptionPress(2, question.answer)}
-                                    disabled={correct !== 0}
-                                    style={[styles.optionButton, correct !== 0 && styles.disabledButton, question.answer === 2 && correct !== 0 && { backgroundColor: 'green' }]}
-                                >
-                                    <Text style={styles.optionText}>Option 2: {question.option2}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity 
-                                    onPress={() => handleOptionPress(3, question.answer)}
-                                    disabled={correct !== 0}
-                                    style={[styles.optionButton, correct !== 0 && styles.disabledButton, question.answer === 3 && correct !== 0 && { backgroundColor: 'green' }]}
-                                >
-                                    <Text style={styles.optionText}>Option 3: {question.option3}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity 
-                                    onPress={() => handleOptionPress(4, question.answer)}
-                                    disabled={correct !== 0}
-                                    style={[styles.optionButton, correct !== 0 && styles.disabledButton, question.answer === 4 && correct !== 0 && { backgroundColor: 'green' }]}
-                                >
-                                    <Text style={styles.optionText}>Option 4: {question.option4}</Text>
-                                </TouchableOpacity>
-                            </View>
-                        ))
+                        <View key={questions[questions.length - 1].id} style={styles.questionBlock}>
+                            {questions[questions.length - 1].url && (
+                                <Image
+                                    source={{ uri: questions[questions.length - 1].url }}
+                                    style={styles.image}
+                                />
+                            )}
+                            <TouchableOpacity 
+                                onPress={() => handleOptionPress(1, questions[questions.length - 1].answer)}
+                                disabled={correct !== 0}
+                                style={[styles.optionButton, correct !== 0 && styles.disabledButton, questions[questions.length - 1].answer === 1 && correct !== 0 && { backgroundColor: 'green' }]}
+                            >
+                                <Text style={styles.optionText}>Option 1: {questions[questions.length - 1].option1}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress={() => handleOptionPress(2, questions[questions.length - 1].answer)}
+                                disabled={correct !== 0}
+                                style={[styles.optionButton, correct !== 0 && styles.disabledButton, questions[questions.length - 1].answer === 2 && correct !== 0 && { backgroundColor: 'green' }]}
+                            >
+                                <Text style={styles.optionText}>Option 2: {questions[questions.length - 1].option2}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress={() => handleOptionPress(3, questions[questions.length - 1].answer)}
+                                disabled={correct !== 0}
+                                style={[styles.optionButton, correct !== 0 && styles.disabledButton, questions[questions.length - 1].answer === 3 && correct !== 0 && { backgroundColor: 'green' }]}
+                            >
+                                <Text style={styles.optionText}>Option 3: {questions[questions.length - 1].option3}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress={() => handleOptionPress(4, questions[questions.length - 1].answer)}
+                                disabled={correct !== 0}
+                                style={[styles.optionButton, correct !== 0 && styles.disabledButton, questions[questions.length - 1].answer === 4 && correct !== 0 && { backgroundColor: 'green' }]}
+                            >
+                                <Text style={styles.optionText}>Option 4: {questions[questions.length - 1].option4}</Text>
+                            </TouchableOpacity>
+                        </View>
                     )}
                 </View>
             </View>
@@ -363,5 +346,3 @@ const styles = StyleSheet.create({
 });
 
 export default QuestionSpecificScreen;
-
-
